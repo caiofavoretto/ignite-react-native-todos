@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import { Header } from '../components/Header';
 import { MyTasksList } from '../components/MyTasksList';
@@ -11,31 +12,59 @@ interface Task {
 }
 
 export function Home() {
-  // const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   function handleAddTask(newTaskTitle: string) {
-    //TODO - add new task if it's not empty
+    if (!newTaskTitle) {
+      return;
+    }
+
+    const newTask: Task = {
+      id: new Date().getTime(),
+      title: newTaskTitle,
+      done: false,
+    };
+
+    setTasks((current) => [...current, newTask]);
   }
 
   function handleMarkTaskAsDone(id: number) {
-    //TODO - mark task as done if exists
+    setTasks((current) =>
+      current.map((task) => {
+        if (task.id === id) {
+          return {
+            ...task,
+            done: !task.done,
+          };
+        }
+
+        return task;
+      })
+    );
   }
 
   function handleRemoveTask(id: number) {
-    //TODO - remove task from state
+    setTasks((current) => current.filter((task) => task.id !== id));
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <Header />
 
       <TodoInput addTask={handleAddTask} />
 
-      <MyTasksList 
-        tasks={tasks} 
-        onPress={handleMarkTaskAsDone} 
-        onLongPress={handleRemoveTask} 
+      <MyTasksList
+        tasks={tasks}
+        onPress={handleMarkTaskAsDone}
+        onLongPress={handleRemoveTask}
       />
-    </>
-  )
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+});
