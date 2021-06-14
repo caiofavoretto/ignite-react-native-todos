@@ -11,8 +11,11 @@ interface Task {
   done: boolean;
 }
 
+type colorThemes = 'light' | 'dark';
+
 export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [colorTheme, setColorTheme] = useState<colorThemes>('light');
 
   function handleAddTask(newTaskTitle: string) {
     if (!newTaskTitle) {
@@ -43,20 +46,33 @@ export function Home() {
     );
   }
 
+  function handleChangeTheme() {
+    if (colorTheme === 'dark') {
+      setColorTheme('light');
+
+      return;
+    }
+
+    setColorTheme('dark');
+  }
+
   function handleRemoveTask(id: number) {
     setTasks((current) => current.filter((task) => task.id !== id));
   }
 
   return (
-    <View style={styles.container}>
-      <Header />
+    <View
+      style={colorTheme === 'light' ? styles.container : styles.ContainerDark}
+    >
+      <Header changeColorTheme={handleChangeTheme} colorTheme={colorTheme} />
 
-      <TodoInput addTask={handleAddTask} />
+      <TodoInput addTask={handleAddTask} colorTheme={colorTheme} />
 
       <MyTasksList
         tasks={tasks}
         onPress={handleMarkTaskAsDone}
         onLongPress={handleRemoveTask}
+        colorTheme={colorTheme}
       />
     </View>
   );
@@ -66,5 +82,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+  },
+  ContainerDark: {
+    flex: 1,
+    backgroundColor: '#000000',
   },
 });
